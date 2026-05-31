@@ -1,0 +1,12 @@
+# Backend
+backend/CaffiendAdmin/bin/
+backend/CaffiendAdmin/obj/
+backend/CaffiendAdmin/appsettings.json
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+
+# Genel
+.env
+*.user
