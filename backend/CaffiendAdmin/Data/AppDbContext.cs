@@ -12,6 +12,9 @@ public class AppDbContext : DbContext
     public DbSet<Subscription> Subscriptions => Set<Subscription>();
     public DbSet<SubscriptionItem> SubscriptionItems => Set<SubscriptionItem>();
     public DbSet<ErrorLog> ErrorLogs => Set<ErrorLog>();
+    
+    // YENİ EKLENEN: Admin kullanıcısı veri tabanı tablosu
+    public DbSet<AdminUser> AdminUsers => Set<AdminUser>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -47,5 +50,10 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<ErrorLog>()
             .Property(e => e.Source)
             .HasConversion<string>();
+
+        // YENİ EKLENEN: Aynı kullanıcı adıyla birden fazla admin açılmasını engeller (Unique)
+        modelBuilder.Entity<AdminUser>()
+            .HasIndex(a => a.Username)
+            .IsUnique();
     }
 }
