@@ -8,6 +8,9 @@ import {
   type Product,
   type ErrorLog,
 } from "./api/api";
+import axios from "axios";
+
+const BASE_URL = "http://localhost:5004/api";
 
 // ─── Login Sayfası ──────────────────────────────────────────────────────────
 function LoginPage({ onLogin }: { onLogin: () => void }) {
@@ -25,90 +28,47 @@ function LoginPage({ onLogin }: { onLogin: () => void }) {
       localStorage.setItem("caffiend_token", token);
       onLogin();
     } catch {
-      setError("Kullanıcı adı veya şifre hatalı.");
+      setError("Kullanici adi veya sifre hatali.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div
-      className="min-h-screen flex items-center justify-center"
-      style={{ backgroundColor: "#FAF9F6" }}
-    >
+    <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: "#FAF9F6" }}>
       <div className="w-full max-w-sm">
-        {/* Logo */}
         <div className="text-center mb-8">
           <span className="text-5xl">☕</span>
           <h1 className="text-2xl font-bold text-[#2C2C2C] mt-3">Caffiend Admin</h1>
           <p className="text-sm text-[#8B7355] mt-1">Abonelik Yönetim Paneli</p>
         </div>
-
-        {/* Kart */}
         <div className="bg-white rounded-2xl border border-[#E8E0D5] p-8 shadow-sm">
           <h2 className="text-base font-semibold text-[#2C2C2C] mb-6">Giriş Yap</h2>
-
           <div className="space-y-4">
             <div>
-              <label className="text-xs font-medium text-[#8B7355] uppercase tracking-wide mb-1.5 block">
-                Kullanıcı Adı
-              </label>
-              <input
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleLogin()}
-                placeholder="caffiend"
-                className="w-full border border-[#E8E0D5] rounded-xl px-4 py-2.5 text-sm text-[#2C2C2C] focus:outline-none focus:ring-2 focus:ring-[#C4A882] bg-[#FDFCFB] placeholder:text-[#C4B8A8]"
-              />
+              <label className="text-xs font-medium text-[#8B7355] uppercase tracking-wide mb-1.5 block">Kullanıcı Adı</label>
+              <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleLogin()} placeholder="caffiend"
+                className="w-full border border-[#E8E0D5] rounded-xl px-4 py-2.5 text-sm text-[#2C2C2C] focus:outline-none focus:ring-2 focus:ring-[#C4A882] bg-[#FDFCFB] placeholder:text-[#C4B8A8]" />
             </div>
-
             <div>
-              <label className="text-xs font-medium text-[#8B7355] uppercase tracking-wide mb-1.5 block">
-                Şifre
-              </label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleLogin()}
-                placeholder="••••••••"
-                className="w-full border border-[#E8E0D5] rounded-xl px-4 py-2.5 text-sm text-[#2C2C2C] focus:outline-none focus:ring-2 focus:ring-[#C4A882] bg-[#FDFCFB] placeholder:text-[#C4B8A8]"
-              />
+              <label className="text-xs font-medium text-[#8B7355] uppercase tracking-wide mb-1.5 block">Şifre</label>
+              <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleLogin()} placeholder="••••••••"
+                className="w-full border border-[#E8E0D5] rounded-xl px-4 py-2.5 text-sm text-[#2C2C2C] focus:outline-none focus:ring-2 focus:ring-[#C4A882] bg-[#FDFCFB] placeholder:text-[#C4B8A8]" />
             </div>
-
-            {error && (
-              <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-2.5 text-sm text-red-600">
-                {error}
-              </div>
-            )}
-
-            <button
-              onClick={handleLogin}
-              disabled={loading || !username || !password}
-              className="w-full bg-[#6B3F2A] text-white py-2.5 rounded-xl text-sm font-semibold hover:bg-[#5A3322] transition-colors disabled:opacity-40 disabled:cursor-not-allowed mt-2"
-            >
-              {loading ? (
-                <span className="flex items-center justify-center gap-2">
-                  <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  Giriş yapılıyor...
-                </span>
-              ) : (
-                "Giriş Yap"
-              )}
+            {error && <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-2.5 text-sm text-red-600">{error}</div>}
+            <button onClick={handleLogin} disabled={loading || !username || !password}
+              className="w-full bg-[#6B3F2A] text-white py-2.5 rounded-xl text-sm font-semibold hover:bg-[#5A3322] transition-colors disabled:opacity-40 disabled:cursor-not-allowed mt-2">
+              {loading ? <span className="flex items-center justify-center gap-2"><span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />Giriş yapılıyor...</span> : "Giriş Yap"}
             </button>
           </div>
-
-          <p className="text-xs text-[#C4B8A8] text-center mt-6">
-            Varsayılan: <span className="font-mono">caffiend</span> / <span className="font-mono">Admin1234!</span>
-          </p>
+          <p className="text-xs text-[#C4B8A8] text-center mt-6">Varsayılan: <span className="font-mono">caffiend</span> / <span className="font-mono">Admin1234!</span></p>
         </div>
       </div>
     </div>
   );
 }
 
-// ─── Yardımcı Bileşenler ────────────────────────────────────────────────────
+// ─── Yardımcı ──────────────────────────────────────────────────────────────
 function StatusBadge({ status }: { status: "Active" | "Paused" }) {
   const isActive = status === "Active";
   return (
@@ -118,22 +78,11 @@ function StatusBadge({ status }: { status: "Active" | "Paused" }) {
     </span>
   );
 }
-
 function LoadingSpinner() {
-  return (
-    <div className="flex items-center justify-center h-40">
-      <div className="w-8 h-8 border-2 border-[#6B3F2A] border-t-transparent rounded-full animate-spin" />
-    </div>
-  );
+  return <div className="flex items-center justify-center h-40"><div className="w-8 h-8 border-2 border-[#6B3F2A] border-t-transparent rounded-full animate-spin" /></div>;
 }
-
 function EmptyState({ message }: { message: string }) {
-  return (
-    <div className="flex flex-col items-center justify-center h-40 text-[#8B7355]/60">
-      <span className="text-4xl mb-3">☕</span>
-      <p className="text-sm">{message}</p>
-    </div>
-  );
+  return <div className="flex flex-col items-center justify-center h-40 text-[#8B7355]/60"><span className="text-4xl mb-3">☕</span><p className="text-sm">{message}</p></div>;
 }
 
 // ─── Abonelik Sekmesi ───────────────────────────────────────────────────────
@@ -143,21 +92,15 @@ function SubscriptionsTab() {
   const [actionLoading, setActionLoading] = useState<number | null>(null);
 
   const load = useCallback(async () => {
-    try {
-      setLoading(true);
-      setSubs(await subscriptionService.getAll());
-    } catch { setSubs([]); }
-    finally { setLoading(false); }
+    try { setLoading(true); setSubs(await subscriptionService.getAll()); }
+    catch { setSubs([]); } finally { setLoading(false); }
   }, []);
-
   useEffect(() => { load(); }, [load]);
 
   const handleToggle = async (sub: Subscription) => {
     setActionLoading(sub.id);
     try {
-      const updated = sub.status === "Active"
-        ? await subscriptionService.pause(sub.id)
-        : await subscriptionService.activate(sub.id);
+      const updated = sub.status === "Active" ? await subscriptionService.pause(sub.id) : await subscriptionService.activate(sub.id);
       setSubs((prev) => prev.map((s) => s.id === sub.id ? updated : s));
     } catch {
       setSubs((prev) => prev.map((s) => s.id === sub.id ? { ...s, status: s.status === "Active" ? "Paused" : "Active" } : s));
@@ -188,10 +131,7 @@ function SubscriptionsTab() {
                 <StatusBadge status={sub.status} />
               </div>
               <p className="text-sm text-[#8B7355]">{sub.user.email}</p>
-              <p className="text-xs text-[#8B7355]/70 mt-1">
-                Her {sub.frequencyWeeks} haftada bir · Sonraki:{" "}
-                <span className="font-medium text-[#6B3F2A]">{new Date(sub.nextDeliveryDate).toLocaleDateString("tr-TR")}</span>
-              </p>
+              <p className="text-xs text-[#8B7355]/70 mt-1">Her {sub.frequencyWeeks} haftada bir · Sonraki: <span className="font-medium text-[#6B3F2A]">{new Date(sub.nextDeliveryDate).toLocaleDateString("tr-TR")}</span></p>
             </div>
             <div className="flex gap-2">
               <button onClick={() => handleToggle(sub)} disabled={actionLoading === sub.id}
@@ -231,10 +171,8 @@ function ProductsTab() {
 
   const load = useCallback(async () => {
     try { setLoading(true); setProducts(await productService.getAll()); }
-    catch { setProducts([]); }
-    finally { setLoading(false); }
+    catch { setProducts([]); } finally { setLoading(false); }
   }, []);
-
   useEffect(() => { load(); }, [load]);
 
   const handleSubmit = async () => {
@@ -245,10 +183,7 @@ function ProductsTab() {
       setProducts((prev) => [created, ...prev]);
     } catch {
       setProducts((prev) => [{ id: Date.now(), name: form.name, category: form.category, pricePerUnit: parseFloat(form.pricePerUnit), stock: parseInt(form.stock) }, ...prev]);
-    } finally {
-      setForm({ name: "", category: "", pricePerUnit: "", stock: "" });
-      setSaving(false);
-    }
+    } finally { setForm({ name: "", category: "", pricePerUnit: "", stock: "" }); setSaving(false); }
   };
 
   const handleDelete = async (id: number) => {
@@ -306,10 +241,168 @@ function ProductsTab() {
   );
 }
 
+// ─── Kullanıcı & Abonelik Sekmesi ───────────────────────────────────────────
+interface User { id: number; fullName: string; email: string; }
+
+function UsersTab() {
+  const [users, setUsers] = useState<User[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [step, setStep] = useState<"user" | "subscription">("user");
+  const [createdUser, setCreatedUser] = useState<User | null>(null);
+  const [userForm, setUserForm] = useState({ fullName: "", email: "" });
+  const [subForm, setSubForm] = useState({ frequencyWeeks: "1", productId: "", quantity: "1" });
+  const [successMsg, setSuccessMsg] = useState("");
+
+  const token = localStorage.getItem("caffiend_token");
+  const headers = { Authorization: `Bearer ${token}`, "Content-Type": "application/json" };
+
+  const load = useCallback(async () => {
+    try {
+      setLoading(true);
+      const [u, p] = await Promise.all([
+        axios.get<User[]>(`${BASE_URL}/users`, { headers }).then(r => r.data),
+        axios.get<Product[]>(`${BASE_URL}/products`, { headers }).then(r => r.data),
+      ]);
+      setUsers(u);
+      setProducts(p);
+    } catch { setUsers([]); setProducts([]); }
+    finally { setLoading(false); }
+  }, []);
+
+  useEffect(() => { load(); }, [load]);
+
+  const handleCreateUser = async () => {
+    if (!userForm.fullName || !userForm.email) return;
+    setSaving(true);
+    try {
+      const res = await axios.post<User>(`${BASE_URL}/users`, userForm, { headers });
+      setCreatedUser(res.data);
+      setUsers(prev => [res.data, ...prev]);
+      setStep("subscription");
+    } catch { alert("Kullanıcı oluşturulamadı."); }
+    finally { setSaving(false); }
+  };
+
+  const handleCreateSubscription = async () => {
+    if (!createdUser || !subForm.productId) return;
+    setSaving(true);
+    try {
+      await axios.post(`${BASE_URL}/subscriptions`, {
+        userId: createdUser.id,
+        status: "Active",
+        frequencyWeeks: parseInt(subForm.frequencyWeeks),
+        items: [{ productId: parseInt(subForm.productId), quantity: parseInt(subForm.quantity) }],
+      }, { headers });
+      setSuccessMsg(`${createdUser.fullName} için abonelik oluşturuldu!`);
+      setUserForm({ fullName: "", email: "" });
+      setSubForm({ frequencyWeeks: "1", productId: "", quantity: "1" });
+      setCreatedUser(null);
+      setStep("user");
+    } catch { alert("Abonelik oluşturulamadı."); }
+    finally { setSaving(false); }
+  };
+
+  const handleDeleteUser = async (id: number) => {
+    try { await axios.delete(`${BASE_URL}/users/${id}`, { headers }); }
+    catch {}
+    setUsers(prev => prev.filter(u => u.id !== id));
+  };
+
+  if (loading) return <LoadingSpinner />;
+
+  return (
+    <div className="space-y-6">
+      {successMsg && (
+        <div className="bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3 text-sm text-emerald-700 flex items-center justify-between">
+          ✅ {successMsg}
+          <button onClick={() => setSuccessMsg("")} className="text-emerald-500 hover:text-emerald-700 text-lg leading-none">×</button>
+        </div>
+      )}
+
+      {/* Form */}
+      <div className="bg-white rounded-2xl border border-[#E8E0D5] p-5">
+        {/* Adım göstergesi */}
+        <div className="flex items-center gap-3 mb-5">
+          <div className={`flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium ${step === "user" ? "bg-[#6B3F2A] text-white" : "bg-emerald-100 text-emerald-700"}`}>
+            {step === "user" ? "1" : "✓"} Kullanıcı Bilgileri
+          </div>
+          <div className="w-8 h-px bg-[#E8E0D5]" />
+          <div className={`flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium ${step === "subscription" ? "bg-[#6B3F2A] text-white" : "bg-[#F5EFE8] text-[#8B7355]"}`}>
+            2 Abonelik Detayları
+          </div>
+        </div>
+
+        {step === "user" ? (
+          <div>
+            <h3 className="text-sm font-semibold text-[#6B3F2A] uppercase tracking-wide mb-4">👤 Yeni Kullanıcı</h3>
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <input className="border border-[#E8E0D5] rounded-xl px-3 py-2 text-sm text-[#2C2C2C] focus:outline-none focus:ring-2 focus:ring-[#C4A882] bg-[#FDFCFB] placeholder:text-[#C4B8A8]"
+                placeholder="Ad Soyad" value={userForm.fullName} onChange={(e) => setUserForm({ ...userForm, fullName: e.target.value })} />
+              <input className="border border-[#E8E0D5] rounded-xl px-3 py-2 text-sm text-[#2C2C2C] focus:outline-none focus:ring-2 focus:ring-[#C4A882] bg-[#FDFCFB] placeholder:text-[#C4B8A8]"
+                placeholder="E-posta" type="email" value={userForm.email} onChange={(e) => setUserForm({ ...userForm, email: e.target.value })} />
+            </div>
+            <button onClick={handleCreateUser} disabled={saving || !userForm.fullName || !userForm.email}
+              className="mt-3 px-5 py-2 bg-[#6B3F2A] text-white text-sm font-medium rounded-xl hover:bg-[#5A3322] transition-colors disabled:opacity-40">
+              {saving ? "Kaydediliyor..." : "Devam Et →"}
+            </button>
+          </div>
+        ) : (
+          <div>
+            <h3 className="text-sm font-semibold text-[#6B3F2A] uppercase tracking-wide mb-1">📦 Abonelik Oluştur</h3>
+            <p className="text-xs text-[#8B7355] mb-4">Kullanıcı: <span className="font-semibold text-[#2C2C2C]">{createdUser?.fullName}</span></p>
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+              <select className="border border-[#E8E0D5] rounded-xl px-3 py-2 text-sm text-[#2C2C2C] focus:outline-none focus:ring-2 focus:ring-[#C4A882] bg-[#FDFCFB]"
+                value={subForm.frequencyWeeks} onChange={(e) => setSubForm({ ...subForm, frequencyWeeks: e.target.value })}>
+                <option value="1">Her hafta</option>
+                <option value="2">2 haftada bir</option>
+                <option value="4">4 haftada bir</option>
+              </select>
+              <select className="border border-[#E8E0D5] rounded-xl px-3 py-2 text-sm text-[#2C2C2C] focus:outline-none focus:ring-2 focus:ring-[#C4A882] bg-[#FDFCFB]"
+                value={subForm.productId} onChange={(e) => setSubForm({ ...subForm, productId: e.target.value })}>
+                <option value="">Ürün seç</option>
+                {products.map(p => <option key={p.id} value={p.id}>☕ {p.name}</option>)}
+              </select>
+              <input type="number" min="1" className="border border-[#E8E0D5] rounded-xl px-3 py-2 text-sm text-[#2C2C2C] focus:outline-none focus:ring-2 focus:ring-[#C4A882] bg-[#FDFCFB]"
+                placeholder="Adet" value={subForm.quantity} onChange={(e) => setSubForm({ ...subForm, quantity: e.target.value })} />
+            </div>
+            <div className="flex gap-2 mt-3">
+              <button onClick={() => setStep("user")} className="px-4 py-2 text-sm text-[#8B7355] border border-[#E8E0D5] rounded-xl hover:bg-[#FAF6F0] transition-colors">← Geri</button>
+              <button onClick={handleCreateSubscription} disabled={saving || !subForm.productId}
+                className="px-5 py-2 bg-[#6B3F2A] text-white text-sm font-medium rounded-xl hover:bg-[#5A3322] transition-colors disabled:opacity-40">
+                {saving ? "Oluşturuluyor..." : "✅ Abonelik Oluştur"}
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Kullanıcı listesi */}
+      {users.length > 0 && (
+        <div className="bg-white rounded-2xl border border-[#E8E0D5] overflow-hidden">
+          <div className="px-5 py-3 border-b border-[#F0E8DC] bg-[#FAF6F0]">
+            <p className="text-xs font-semibold text-[#8B7355] uppercase tracking-wide">Kayıtlı Kullanıcılar ({users.length})</p>
+          </div>
+          {users.map((u) => (
+            <div key={u.id} className="flex items-center justify-between px-5 py-3 border-b border-[#F5EFE8] last:border-0 hover:bg-[#FDFAF7] transition-colors">
+              <div>
+                <p className="text-sm font-medium text-[#2C2C2C]">{u.fullName}</p>
+                <p className="text-xs text-[#8B7355]">{u.email}</p>
+              </div>
+              <button onClick={() => handleDeleteUser(u.id)} className="text-[#C4A882] hover:text-red-500 transition-colors text-lg leading-none">×</button>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── Hata Takipçisi ─────────────────────────────────────────────────────────
 const SIMULATED_ERRORS = [
   { message: "NullReferenceException: Object reference not set to an instance of an object.", stackTrace: `at CaffiendAdmin.Services.SubscriptionService.GetNextDelivery(Int32 userId) in /app/Services/SubscriptionService.cs:line 87`, source: "Backend" as const },
-  { message: "TypeError: Cannot read properties of undefined (reading 'items')", stackTrace: `at SubscriptionsTab (App.tsx:142:28)\n    at renderWithHooks (react-dom.development.js:14985:18)`, source: "Frontend" as const },
+  { message: "TypeError: Cannot read properties of undefined (reading 'items')", stackTrace: `at SubscriptionsTab (App.tsx:142:28)`, source: "Frontend" as const },
   { message: "Unhandled Promise Rejection: Network Error — POST /api/subscriptions/99/activate returned 404", stackTrace: `at api.ts:handleToggle (App.tsx:108:22)`, source: "Frontend" as const },
   { message: "PostgreSQL: duplicate key value violates unique constraint 'users_email_key'", stackTrace: `at Npgsql.NpgsqlCommand.ExecuteReader()\n   at CaffiendAdmin.Controllers.UsersController.Create() line 41`, source: "Backend" as const },
 ];
@@ -322,10 +415,8 @@ function ErrorTrackerTab() {
 
   const load = useCallback(async () => {
     try { setLoading(true); setLogs(await errorLogService.getAll()); }
-    catch { setLogs([]); }
-    finally { setLoading(false); }
+    catch { setLogs([]); } finally { setLoading(false); }
   }, []);
-
   useEffect(() => { load(); }, [load]);
 
   const triggerError = async () => {
@@ -336,8 +427,7 @@ function ErrorTrackerTab() {
     try { await errorLogService.create({ source: template.source, message: template.message, stackTrace: template.stackTrace }); } catch {}
     setTimeout(() => {
       setLogs((prev) => prev.map((l) => l.id === mockLog.id ? {
-        ...l,
-        aiAnalysis: `🔍 Hatanın Kökü: ${template.source === "Backend" ? "Sunucu tarafında beklenmeyen bir istisna fırlatılmış." : "React bileşeni render aşamasında undefined değere erişmeye çalışmış."}\n\n🛠️ Olası Sebepler:\n• Veri kaynağından boş response dönmüş\n• Async işlem tamamlanmadan state güncellenmiş\n\n✅ Çözüm Önerisi:\n1. İlgili servise null-check ekleyin\n2. Loading state kontrolü yapın\n3. Try-catch bloğunu genişletin\n\n⚠️ Önleyici Tedbir: Integration testleri ekleyin.`
+        ...l, aiAnalysis: `🔍 Hatanın Kökü: ${template.source === "Backend" ? "Sunucu tarafında beklenmeyen bir istisna fırlatılmış." : "React bileşeni render aşamasında undefined değere erişmeye çalışmış."}\n\n🛠️ Olası Sebepler:\n• Veri kaynağından boş response dönmüş\n• Async işlem tamamlanmadan state güncellenmiş\n\n✅ Çözüm Önerisi:\n1. İlgili servise null-check ekleyin\n2. Loading state kontrolü yapın\n3. Try-catch bloğunu genişletin\n\n⚠️ Önleyici Tedbir: Integration testleri ekleyin.`
       } : l));
     }, 2500);
     setTriggering(false);
@@ -352,8 +442,7 @@ function ErrorTrackerTab() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <p className="text-sm text-[#8B7355]">{logs.length} hata kaydı · AI analizi otomatik çalışır</p>
-        <button onClick={triggerError} disabled={triggering}
-          className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white text-sm font-semibold rounded-xl hover:bg-red-700 transition-all disabled:opacity-50">
+        <button onClick={triggerError} disabled={triggering} className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white text-sm font-semibold rounded-xl hover:bg-red-700 transition-all disabled:opacity-50">
           {triggering ? <><span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />Tetikleniyor...</> : "🔥 Yapay Hata Tetikle"}
         </button>
       </div>
@@ -404,16 +493,16 @@ function ErrorTrackerTab() {
 }
 
 // ─── Ana Panel ──────────────────────────────────────────────────────────────
-type TabId = "subscriptions" | "products" | "errors";
+type TabId = "subscriptions" | "products" | "users" | "errors";
 const TABS: { id: TabId; label: string; icon: string }[] = [
-  { id: "subscriptions", label: "Abonelik Yönetimi", icon: "📦" },
+  { id: "subscriptions", label: "Abonelikler", icon: "📦" },
   { id: "products", label: "Ürün Stoku", icon: "🌿" },
-  { id: "errors", label: "Akıllı Hata Takipçisi", icon: "🔍" },
+  { id: "users", label: "Kullanıcı Ekle", icon: "👤" },
+  { id: "errors", label: "Hata Takipçisi", icon: "🔍" },
 ];
 
 function Dashboard({ onLogout }: { onLogout: () => void }) {
   const [activeTab, setActiveTab] = useState<TabId>("subscriptions");
-
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#FAF9F6", fontFamily: "'DM Sans', 'Helvetica Neue', sans-serif" }}>
       <header className="bg-white border-b border-[#EDE5DA] sticky top-0 z-10">
@@ -430,16 +519,10 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
               <span className="w-2 h-2 bg-emerald-400 rounded-full" />
               <span className="text-xs text-[#8B7355]">AWS RDS • Bağlı</span>
             </div>
-            <button
-              onClick={onLogout}
-              className="text-xs text-[#8B7355] hover:text-[#6B3F2A] border border-[#E8E0D5] px-3 py-1.5 rounded-lg hover:border-[#C4A882] transition-all"
-            >
-              Çıkış
-            </button>
+            <button onClick={onLogout} className="text-xs text-[#8B7355] hover:text-[#6B3F2A] border border-[#E8E0D5] px-3 py-1.5 rounded-lg hover:border-[#C4A882] transition-all">Çıkış</button>
           </div>
         </div>
       </header>
-
       <main className="max-w-5xl mx-auto px-4 sm:px-6 py-6">
         <div className="flex gap-1 bg-white border border-[#EDE5DA] rounded-2xl p-1 mb-6">
           {TABS.map((tab) => (
@@ -453,6 +536,7 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
         <div>
           {activeTab === "subscriptions" && <SubscriptionsTab />}
           {activeTab === "products" && <ProductsTab />}
+          {activeTab === "users" && <UsersTab />}
           {activeTab === "errors" && <ErrorTrackerTab />}
         </div>
       </main>
@@ -460,16 +544,10 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
   );
 }
 
-// ─── App (Auth Router) ──────────────────────────────────────────────────────
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(authService.isLoggedIn());
-
   const handleLogin = () => setIsLoggedIn(true);
-  const handleLogout = () => {
-    authService.logout();
-    setIsLoggedIn(false);
-  };
-
+  const handleLogout = () => { authService.logout(); setIsLoggedIn(false); };
   if (!isLoggedIn) return <LoginPage onLogin={handleLogin} />;
   return <Dashboard onLogout={handleLogout} />;
 }
